@@ -39,7 +39,7 @@ namespace PackTracker
                 }
                 catch
                 {
-                    isPremium = ((dynamic)Card).PremiumType == 1;
+                    isPremium = ((dynamic)Card).PremiumType != 0;
                 }
                 Cards.Add(new Entity.Card(cardFromId, isPremium));
             }
