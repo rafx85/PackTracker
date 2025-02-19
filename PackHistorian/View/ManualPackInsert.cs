@@ -1,7 +1,7 @@
 ﻿// Author: Ellekappae <https://github.com/Ellekappae>
 using CardSet = HearthDb.Enums.CardSet;
 using CardClass = HearthDb.Enums.CardClass;
-using Hearthstone_Deck_Tracker.Utility;
+using Hearthstone_Deck_Tracker.Commands;
 using PackTracker.Entity;
 using PackTracker.Storage;
 using System;
@@ -80,7 +80,7 @@ namespace PackTracker.View
 
         private readonly Dictionary<int, List<HDTCard>> _setsCache = new Dictionary<int, List<HDTCard>>();
 
-        internal static readonly List<int> GoldenPacks = new List<int> { 23, 603, 643, 686, 716, 737, 841, 850, 874, 904, 921, 932, 937, 938, 939, 952, 970, 977, 985, 986 };
+        internal static readonly List<int> GoldenPacks = new List<int> { 23, 603, 643, 686, 716, 737, 841, 850, 874, 904, 921, 932, 937, 938, 939, 952, 970, 977, 985, 986, 990 };
         private static readonly Dictionary<int, Func<HearthDb.Card, bool>> _filter = new Dictionary<int, Func<HearthDb.Card, bool>>
         {
             [1] = card => card.Set == CardSet.EXPERT1,
@@ -150,12 +150,14 @@ namespace PackTracker.View
             [965] = card => card.Set is CardSet.SPACE,
             [970] = card => card.Set == CardSet.WHIZBANGS_WORKSHOP,
             [971] = card => card.Set is CardSet.BATTLE_OF_THE_BANDS or CardSet.TITANS or CardSet.WONDERS,
+            [975] = card => card.Set is CardSet.EMERALD_DREAM,
             [977] = card => card.Set is CardSet.ISLAND_VACATION,
             [978] = card => card.Set is CardSet.BATTLE_OF_THE_BANDS or CardSet.TITANS or CardSet.WONDERS, // Why another Whizbang's Workshop Catch-up?
             [984] = card => card.Set is CardSet.WHIZBANGS_WORKSHOP or CardSet.ISLAND_VACATION or CardSet.SPACE,
             [985] = card => card.Set is CardSet.WHIZBANGS_WORKSHOP or CardSet.ISLAND_VACATION or CardSet.SPACE,
             [986] = card => card.Set is CardSet.SPACE,
             [987] = card => card.Set is CardSet.BATTLE_OF_THE_BANDS or CardSet.TITANS or CardSet.WONDERS or CardSet.WHIZBANGS_WORKSHOP or CardSet.ISLAND_VACATION,
+            [990] = card => card.Set is CardSet.EMERALD_DREAM,
         };
 
         public ManualPackInsert()
