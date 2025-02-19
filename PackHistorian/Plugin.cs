@@ -23,7 +23,7 @@ namespace PackTracker
         private View.AverageCollection _averageCollection;
         private View.Cache.PityTimerRepository _pityTimers;
 
-        public static Version CurrentVersion { get; } = new Version("1.4.23");
+        public static Version CurrentVersion { get; } = new Version("1.4.24");
 
         public Plugin()
         {
