@@ -17,8 +17,9 @@ namespace PackTracker.Storage
             var path = Path.Combine(Config.AppDataPath, "PackTracker", "History.xml");
             if (File.Exists(path))
             {
+                var content = File.ReadAllText(path);
                 var Xml = new XmlDocument();
-                Xml.Load(path);
+                Xml.LoadXml(content);
                 var Root = Xml.SelectSingleNode("history");
 
                 if (Root != null)
@@ -50,6 +51,7 @@ namespace PackTracker.Storage
                                         }
                                         else
                                         {
+                                            File.WriteAllText(Path.Combine(Config.AppDataPath, "PackTracker", $"History_backup_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.xml"), content);
                                             return new History();
                                         }
                                     }
@@ -58,11 +60,13 @@ namespace PackTracker.Storage
                                 }
                                 else
                                 {
+                                    File.WriteAllText(Path.Combine(Config.AppDataPath, "PackTracker", $"History_backup_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.xml"), content);
                                     return new History();
                                 }
                             }
                             else
                             {
+                                File.WriteAllText(Path.Combine(Config.AppDataPath, "PackTracker", $"History_backup_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.xml"), content);
                                 return new History();
                             }
                         }
