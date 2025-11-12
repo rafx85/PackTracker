@@ -136,7 +136,7 @@ namespace PackTracker.View
             [850] = card => card.Set == CardSet.THE_SUNKEN_CITY,
             [854] = card => card.Set == CardSet.BATTLE_OF_THE_BANDS,
             [874] = card => card.Set == CardSet.REVENDRETH,
-            [894] = card => card.Set == CardSet.CAVERNS_OF_TIME,
+            [894] = card => card.Set == CardSet.WONDERS,
             [904] = _ => true, // Golden Wild, may change over time
             [918] = card => card.Class == CardClass.DEATHKNIGHT && (int)card.Set > (int)CardSet.TROLL,
             [921] = card => card.Set == CardSet.RETURN_OF_THE_LICH_KING,
@@ -148,7 +148,7 @@ namespace PackTracker.View
             [939] = card => card.Set == CardSet.BLACK_TEMPLE,
             [941] = card => card.Set == CardSet.ISLAND_VACATION,
             [944] = card => card.Set is CardSet.THE_SUNKEN_CITY or CardSet.REVENDRETH or CardSet.RETURN_OF_THE_LICH_KING or CardSet.BATTLE_OF_THE_BANDS or CardSet.TITANS,
-            [945] = card => card.Set == CardSet.CAVERNS_OF_TIME,
+            [945] = card => card.Set == CardSet.WONDERS,
             [952] = card => card.Set == CardSet.WONDERS,
             [965] = card => card.Set is CardSet.SPACE,
             [970] = card => card.Set == CardSet.WHIZBANGS_WORKSHOP,
