@@ -1385,6 +1385,42 @@
         "jaJP": "ゴールデン・夢みる大地エメラルド・ドリーム",
         "thTH": "Into the Emerald Dream สีทอง"
     },
+    "1030": {
+        "enUS": "Cataclysm",
+        "enGB": "Cataclysm",
+        "frFR": "Cataclysme",
+        "deDE": "Kataklysmus",
+        "koKR": "대격변",
+        "esES": "El Cataclismo",
+        "esMX": "Cataclismo",
+        "ruRU": "Катаклизм",
+        "zhTW": "《浩劫與重生》",
+        "zhCN": "大地的裂变",
+        "itIT": "Cataclisma",
+        "ptBR": "Cataclismo",
+        "plPL": "Kataklizm",
+        "ptPT": "Cataclismo",
+        "jaJP": "終焉のアゼロス",
+        "thTH": "Cataclysm"
+    },
+    "1031": {
+        "enUS": "Golden Cataclysm",
+        "enGB": "Golden Cataclysm",
+        "frFR": "Cataclysme doré",
+        "deDE": "Kataklysmus (golden)",
+        "koKR": "황금 대격변",
+        "esES": "El Cataclismo dorado",
+        "esMX": "Cataclismo dorado",
+        "ruRU": "Золотой «Катаклизм»",
+        "zhTW": "《浩劫與重生》黃金卡牌包",
+        "zhCN": "大地的裂变金色",
+        "itIT": "Cataclisma Dorate",
+        "ptBR": "Cataclismo Dourado",
+        "plPL": "Złoty Kataklizm",
+        "ptPT": "Cataclismo Dourado",
+        "jaJP": "ゴールデン・終焉のアゼロス",
+        "thTH": "Cataclysm สีทอง"
+    },
     "1033": {
         "enUS": "Into The Emerald Dream Catch-up",
         "enGB": "Into The Emerald Dream Catch-up",
@@ -1510,5 +1546,23 @@
         "ptPT": "Através dos Percursos Temporais Atualização",
         "jaJP": "「タイムウェイの旅人たち」キャッチアップ",
         "thTH": "แคตช์อัพ Across the Timeways"
+    },
+    "1063": {
+        "enUS": "Cataclysm Catch-up",
+        "enGB": "Cataclysm Catch-up",
+        "frFR": "Rattrapage cataclysmique",
+        "deDE": "Aufholpackung: Kataklysmus",
+        "koKR": "대격변 발돋움",
+        "esES": "Ponte al día con EL CATACLISMO",
+        "esMX": "Abastecimiento de Cataclismo",
+        "ruRU": "«КАТАКЛИЗМ» для догоняющих",
+        "zhTW": "《浩劫與重生》追趕進度包",
+        "zhCN": "大地的裂变追赶包",
+        "itIT": "Recupero di Cataclisma",
+        "ptBR": "Atualização de Cataclismo",
+        "plPL": "Pakiet posiłkowy Kataklizmu",
+        "ptPT": "Atualização de Cataclismo",
+        "jaJP": "「終焉のアゼロス」キャッチアップ",
+        "thTH": "แคตช์อัพ Cataclysm"
     }
 }
