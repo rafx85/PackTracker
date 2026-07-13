@@ -8,6 +8,7 @@
           MouseWheel="dd_Packs_MouseWheel"
           x:Name="dd_Packs"
           VerticalAlignment="Center"
+          MinWidth="200"
           IsEditable="True"
           IsTextSearchEnabled="False"
           StaysOpenOnEdit="True"

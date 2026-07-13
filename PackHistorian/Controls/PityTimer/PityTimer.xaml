@@ -20,8 +20,8 @@
     <DockPanel>
         <Border DockPanel.Dock="Top" Margin="4" Padding="1" BorderBrush="Black" BorderThickness="1">
             <DockPanel>
-                <view:PackDropDown DockPanel.Dock="Right" x:Name="dd_Packs" />
-                <Label Content="Set"/>
+                <Label DockPanel.Dock="Left" Content="Set"/>
+                <view:PackDropDown x:Name="dd_Packs" />
             </DockPanel>
         </Border>
 

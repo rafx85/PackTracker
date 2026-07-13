@@ -27,8 +27,8 @@
         <Border DockPanel.Dock="Top" Margin="4" Padding="1" BorderBrush="Black" BorderThickness="1">
             <StackPanel>
                 <DockPanel>
-                    <local:PackDropDown DockPanel.Dock="Right" x:Name="dd_Packs" />
-                    <Label Content="Set"/>
+                    <Label DockPanel.Dock="Left" Content="Set"/>
+                    <local:PackDropDown x:Name="dd_Packs" />
                 </DockPanel>
                 <Border BorderThickness="0,1,0,0" BorderBrush="CornflowerBlue" Margin="6,6,6,0" />
                 <DockPanel>
