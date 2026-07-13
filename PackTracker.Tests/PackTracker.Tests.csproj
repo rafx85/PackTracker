@@ -16,6 +16,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PackHistorian\PackTracker.csproj" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="HearthDb" HintPath="..\HDT\Hearthstone Deck Tracker\HearthDb.dll" />

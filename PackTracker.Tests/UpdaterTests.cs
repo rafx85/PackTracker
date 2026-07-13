@@ -8,6 +8,12 @@ namespace PackTracker.Tests
 {
     public class UpdaterTests
     {
+        [Fact]
+        public void ReleaseFeedUsesMaintainedFork()
+        {
+            Assert.Equal("https://api.github.com/repos/rafx85/PackTracker/releases", Updater.ReleasesApiUrl);
+        }
+
         [Theory]
         [InlineData("v1.4.26", 1, 4, 26)]
         [InlineData("release-35.0.3", 35, 0, 3)]

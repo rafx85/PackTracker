@@ -14,6 +14,7 @@ namespace PackTracker.Update
     public class Updater
     {
         private const string UserAgent = "PackTracker";
+        internal const string ReleasesApiUrl = "https://api.github.com/repos/rafx85/PackTracker/releases";
         private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(15);
 
         public bool? NewVersionAvailable()
@@ -121,7 +122,7 @@ namespace PackTracker.Update
 
         public Release GetLatestRelease()
         {
-            var request = CreateRequest(@"https://api.github.com/repos/sgkoishi/PackTracker/releases/latest");
+            var request = CreateRequest(ReleasesApiUrl + "/latest");
 
             var Release = new Release();
             using (var response = request.GetResponse().GetResponseStream())
@@ -137,7 +138,7 @@ namespace PackTracker.Update
         {
             var Releases = new List<Release>();
 
-            var request = CreateRequest(@"https://api.github.com/repos/sgkoishi/PackTracker/releases");
+            var request = CreateRequest(ReleasesApiUrl);
 
             try
             {

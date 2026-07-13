@@ -27,7 +27,7 @@ namespace PackTracker
         private static WeakReference<PackWatcher> _activeWatcher;
         private static bool _modeHandlerRegistered;
 
-        public static Version CurrentVersion { get; } = new Version("1.4.26");
+        public static Version CurrentVersion { get; } = new Version("1.4.28");
 
         public Plugin()
         {

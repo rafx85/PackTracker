@@ -1,20 +1,24 @@
-﻿<metro:SplitButton x:Class="PackTracker.Controls.PackDropDown"
-                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                   xmlns:view="clr-namespace:PackTracker.View"
-                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                   xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                   xmlns:local="clr-namespace:PackTracker.Controls"
-                   DataContextChanged="dd_Packs_DataContextChanged" MouseWheel="dd_Packs_MouseWheel"
-                   Click="dd_Packs_Click" x:Name="dd_Packs" VerticalAlignment="Center"
-                   IsEnabled="{Binding Items.Count, Mode=OneWay, RelativeSource={RelativeSource Self}}">
-    <metro:SplitButton.Resources>
+<ComboBox x:Class="PackTracker.Controls.PackDropDown"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:view="clr-namespace:PackTracker.View"
+          DataContextChanged="dd_Packs_DataContextChanged"
+          DropDownOpened="dd_Packs_DropDownOpened"
+          DropDownClosed="dd_Packs_DropDownClosed"
+          MouseWheel="dd_Packs_MouseWheel"
+          x:Name="dd_Packs"
+          VerticalAlignment="Center"
+          IsEditable="True"
+          IsTextSearchEnabled="False"
+          StaysOpenOnEdit="True"
+          ToolTip="Type to filter sets by name or ID"
+          IsEnabled="{Binding Items.Count, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+    <ComboBox.Resources>
         <view:PackNameConverter x:Key="PackNameConverter"/>
-    </metro:SplitButton.Resources>
-    <ItemsControl.ItemTemplate>
+    </ComboBox.Resources>
+    <ComboBox.ItemTemplate>
         <DataTemplate>
             <TextBlock Text="{Binding Converter={StaticResource PackNameConverter}}"/>
         </DataTemplate>
-    </ItemsControl.ItemTemplate>
-</metro:SplitButton>
+    </ComboBox.ItemTemplate>
+</ComboBox>

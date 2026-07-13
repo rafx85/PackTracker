@@ -1,5 +1,6 @@
 using HearthDb.Enums;
 using PackTracker.View;
+using System;
 using System.Collections;
 using System.Reflection;
 using Xunit;
@@ -8,6 +9,12 @@ namespace PackTracker.Tests
 {
     public class PackDefinitionTests
     {
+        [Fact]
+        public void PluginVersionMatchesReleaseVersion()
+        {
+            Assert.Equal(new Version(1, 4, 28), Plugin.CurrentVersion);
+        }
+
         [Theory]
         [InlineData(1047, "Escape from Violet Hold (1047)")]
         [InlineData(1048, "Golden Escape from Violet Hold (1048)")]
