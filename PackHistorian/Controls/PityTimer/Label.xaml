@@ -16,18 +16,23 @@
 >
     <UserControl.Resources>
         <System:Double x:Key="SideLength">120</System:Double>
-        <System:Double x:Key="FontSize">48</System:Double>
+        <System:Double x:Key="FontSize">32</System:Double>
     </UserControl.Resources>
     <Grid Name="Counters">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Popup Name="pu_Popup" StaysOpen="False" PlacementTarget="{Binding ElementName=btn_Popup}" Placement="Bottom" IsOpen="{Binding Popup, UpdateSourceTrigger=PropertyChanged}">
-            <Border BorderThickness="1" Background="LemonChiffon" Padding="2">
-                <TextBlock Text="{Binding PopupText, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" />
+            <Border BorderThickness="1" Background="LemonChiffon" Padding="8" MaxWidth="460">
+                <TextBlock Text="{Binding PopupText, UpdateSourceTrigger=PropertyChanged}"
+                           Foreground="Black"
+                           MaxWidth="440"
+                           TextWrapping="Wrap" />
             </Border>
         </Popup>
         <Button Name="btn_Popup" Margin="0,5,5,0" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Click="btn_Popup_Click">
@@ -43,10 +48,23 @@
             Content="{Binding Current, UpdateSourceTrigger=PropertyChanged}"
             FontSize="{DynamicResource FontSize}"
             HorizontalAlignment="Center" VerticalAlignment="Center"
+            ToolTip="Current streak"
         />
 
         <Border Grid.Row="1" BorderBrush="Black" BorderThickness="0,2,0,0" Margin="10,0" />
 
-        <TextBlock Grid.Row="2" Text="{Binding Limit}" FontSize="{DynamicResource FontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="2"
+                   Text="{Binding Average, TargetNullValue=–, FallbackValue=–}"
+                   FontSize="{DynamicResource FontSize}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   ToolTip="Personal average" />
+
+        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="0,2,0,0" Margin="10,0" />
+
+        <TextBlock Grid.Row="4"
+                   Text="{Binding Limit}"
+                   FontSize="{DynamicResource FontSize}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   ToolTip="Maximum streak" />
     </Grid>
 </UserControl>

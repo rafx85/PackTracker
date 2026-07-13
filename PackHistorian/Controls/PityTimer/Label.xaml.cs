@@ -12,6 +12,7 @@ namespace PackTracker.Controls.PityTimer
     public partial class Label : UserControl, INotifyPropertyChanged
     {
         private int _curr = 0;
+        private int? _average;
         private bool _stillSyncing;
         private int? _packId = null;
 
@@ -36,6 +37,21 @@ namespace PackTracker.Controls.PityTimer
         public int Limit { get; set; }
         public string RarityPlaceholder { get; set; } = null;
 
+        public int? Average
+        {
+            get => this._average;
+            private set
+            {
+                if (this._average == value)
+                {
+                    return;
+                }
+
+                this._average = value;
+                this.OnPropertyChanged("Average");
+            }
+        }
+
         public Label()
         {
             this.InitializeComponent();
@@ -56,6 +72,7 @@ namespace PackTracker.Controls.PityTimer
                 var pt = (View.PityTimer)e.NewValue;
 
                 this.Current = pt.Current;
+                this.Average = pt.Average;
                 pt.PropertyChanged += this.Pt_PropertyChanged;
 
                 this._stillSyncing = pt.SkipFirst && pt.WaitForFirst;
@@ -64,6 +81,7 @@ namespace PackTracker.Controls.PityTimer
             else
             {
                 this.Current = 0;
+                this.Average = null;
                 this._packId = null;
             }
         }
@@ -83,6 +101,7 @@ namespace PackTracker.Controls.PityTimer
                     this._stillSyncing = pt.SkipFirst && pt.WaitForFirst;
                     break;
                 case "Average":
+                    this.Average = pt.Average;
                     break;
             }
         }
@@ -98,51 +117,53 @@ namespace PackTracker.Controls.PityTimer
         {
             var rarity = this.RarityPlaceholder ?? "a card of the respective rarity";
             var packName = this._packId != null ? View.PackNameConverter.Convert((int)this._packId) : "the selected set";
+            var packWord = this._curr == 1 ? "pack" : "packs";
+            var averageText = this.Average.HasValue ? this.Average.Value.ToString() : "–";
 
             var sb = new StringBuilder();
-            sb.AppendLine("This is your pity counter.");
+            sb.Append("Pity timer for ").AppendLine(rarity)
+              .AppendLine();
+
             if (this._stillSyncing)
             {
-                sb.Append("You haven't had ").Append(rarity).AppendLine(" in ").Append(packName).Append(" while recording.")
-                  .Append(Plugin.NAME).AppendLine(" waits for your pity timer to reset in order to sync up with it.")
-                  .AppendLine("Just keep opening packs to achieve this.")
-                  .Append("\nSince recording, you have opened ").Append(this._curr).Append(this._curr != 1 ? " packs of " : " pack of ").Append(packName).Append(" without gaining ").Append(rarity).Append(".")
-                ;
+                sb.AppendLine("Tracking is not synced yet.")
+                  .Append(Plugin.NAME).Append(" has not seen ").Append(rarity).Append(" in ").Append(packName).AppendLine(" yet.")
+                  .AppendLine("Keep opening packs normally. When one appears, the counter will reset to 0 and become accurate.")
+                  .AppendLine();
             }
             else
             {
-                sb.Append("Your ").Append(Plugin.NAME).Append(" synced up with ").Append(packName).Append(" already. This was achieved by you, opening ").Append(rarity).AppendLine(".")
-                  .Append("\nSince that, ").Append(this._curr).Append(this._curr != 1 ? " packs of " : " pack of ").Append(packName).Append(this._curr != 1 ? " have" : " has").Append(" been opened without ").Append(rarity).Append(".")
-                ;
-            }
-            sb.AppendLine(" This is indicated by the number above the line.")
-              .Append("The longest possible streak of ").Append(rarity).Append(" is ").Append(this.Limit).Append(". ")
-              .AppendLine("This is indicated by the number below the line.")
-            ;
-
-            if (this._stillSyncing)
-            {
-                sb.AppendLine("\nSince your Pity Timer is not synced yet, it is most likely that ").Append(packName).Append(" was recently started by you or you just started tracking it.");
+                sb.AppendLine("Tracking is synced.")
+                  .Append(Plugin.NAME).Append(" has already seen ").Append(rarity).Append(" in ").Append(packName).AppendLine(".")
+                  .AppendLine();
             }
 
-            sb.AppendLine("\nAll of this, is also indicated by the bar charts on the left.");
-            if (this._stillSyncing)
+            sb.Append("BIG NUMBER: ").Append(this._curr).AppendLine()
+              .Append("You opened ").Append(this._curr).Append(' ').Append(packWord).Append(" without finding ").Append(rarity).AppendLine(".")
+              .AppendLine()
+              .Append("MIDDLE NUMBER: ").Append(averageText).AppendLine();
+
+            if (this.Average.HasValue)
             {
-                sb.Append("Once you have opned a pack with ").Append(rarity).AppendLine(", the bar that you see, will drop back to 0 and start all over again. Because it wasn't synced yet,")
-                  .Append("keeping that streak would falsify the data. Therefor, ").Append(Plugin.NAME).AppendLine(" cleans is up at the reset of your pity timer.")
-                ;
+                sb.Append("Your completed streaks average ").Append(this.Average.Value).Append(" packs without finding ").Append(rarity).AppendLine(".")
+                  .AppendLine("This is the same value as the blue dashed line.");
             }
             else
             {
-                sb.Append("They represent all your streaks without ").Append(rarity).AppendLine(".")
-                  .Append("Every time you gain ").Append(rarity).AppendLine(", the right bar becomes static and gets pushed to the left, to make space for a new bar, that count from 0 again.")
-                ;
+                sb.AppendLine("There are not enough completed streaks to calculate your personal average yet.");
             }
 
-            sb.Append("The half transparent bar is just another representation of this numeric label. The yellow line indicated the average that Blizzard aims on to gain ").Append(rarity).AppendLine(".")
-              .Append("The red line is the maximum, that's why it is located excactly on ").Append(this.Limit).AppendLine(". If a bar passes that line, there is probably something wrong with the data.")
-              .Append("A dashed line is visable when your pity timer was reseted for the second time and is meant to display your personal average.")
-            ;
+            sb.AppendLine()
+              .Append("SMALL NUMBER: ").Append(this.Limit).AppendLine()
+              .Append("This is the most packs you can miss in a row. If the big number reaches ").Append(this.Limit)
+              .Append(", the next pack should contain ").Append(rarity).AppendLine(".")
+              .AppendLine()
+              .AppendLine("CHART:")
+              .AppendLine("• Each bar is one streak without the card.")
+              .AppendLine("• The faded right bar is your current streak.")
+              .AppendLine("• Yellow line: the usual average, not a guarantee.")
+              .AppendLine("• Red line: the maximum.")
+              .Append("• Blue dashed line: your personal average after enough tracked streaks.");
 
             return sb.ToString();
         }

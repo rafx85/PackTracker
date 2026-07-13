@@ -27,6 +27,7 @@ namespace PackTracker.Controls
         private bool _settingDisplayText;
         private bool _openingFromSearch;
         private int? _lastSelectedId;
+        private int _displayUpdateVersion;
 
         public PackDropDown()
         {
@@ -53,7 +54,7 @@ namespace PackTracker.Controls
             if (this._searchBox != null)
             {
                 this._searchBox.TextChanged += this.SearchBox_TextChanged;
-                this.SetSelectedPackText();
+                this.ScheduleSelectedPackText();
             }
         }
 
@@ -143,8 +144,7 @@ namespace PackTracker.Controls
                 return;
             }
 
-            this.ClearSearch();
-            this.Dispatcher.BeginInvoke(new Action(() => this._searchBox?.SelectAll()), DispatcherPriority.Input);
+            this.ShowAllPacksForDropDown();
         }
 
         private void dd_Packs_DropDownClosed(object sender, EventArgs e)
@@ -155,7 +155,7 @@ namespace PackTracker.Controls
                 this.SelectedItem = this._lastSelectedId.Value;
             }
 
-            this.SetSelectedPackText();
+            this.ScheduleSelectedPackText();
         }
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
@@ -164,8 +164,7 @@ namespace PackTracker.Controls
             if (this.SelectedItem is int id)
             {
                 this._lastSelectedId = id;
-                this.ClearSearch();
-                this.SetSelectedPackText();
+                this.ScheduleSelectedPackText();
             }
         }
 
@@ -175,17 +174,59 @@ namespace PackTracker.Controls
             this._dropDownView?.Refresh();
         }
 
-        private void SetSelectedPackText()
+        private void ShowAllPacksForDropDown()
         {
-            if (this._searchBox == null || !(this.SelectedItem is int id))
-            {
-                return;
-            }
-
+            var updateVersion = ++this._displayUpdateVersion;
             this._settingDisplayText = true;
-            this._searchBox.Text = GetPackDisplayName(id, this._locale);
-            this._searchBox.CaretIndex = this._searchBox.Text.Length;
-            this._settingDisplayText = false;
+            this._searchText = string.Empty;
+            this._dropDownView.Refresh();
+
+            // Opening with the arrow starts a fresh search. Clear the editable
+            // text after ComboBox finishes applying its selected-item text so
+            // the old selection cannot become an automatic one-item filter.
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (updateVersion != this._displayUpdateVersion)
+                {
+                    return;
+                }
+
+                this._searchText = string.Empty;
+                if (this._searchBox != null)
+                {
+                    this._searchBox.Text = string.Empty;
+                    this._searchBox.CaretIndex = 0;
+                    this._searchBox.Focus();
+                }
+
+                this._dropDownView.Refresh();
+                this._settingDisplayText = false;
+            }), DispatcherPriority.ContextIdle);
+        }
+
+        private void ScheduleSelectedPackText()
+        {
+            var updateVersion = ++this._displayUpdateVersion;
+            this._settingDisplayText = true;
+
+            // ComboBox updates its editable text after SelectionChanged. Waiting until
+            // that transaction finishes prevents the raw integer ID from replacing
+            // the localized pack name and retriggering the search filter.
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (updateVersion != this._displayUpdateVersion)
+                {
+                    return;
+                }
+
+                if (this._searchBox != null && this.SelectedItem is int id)
+                {
+                    this._searchBox.Text = GetPackDisplayName(id, this._locale);
+                    this._searchBox.CaretIndex = this._searchBox.Text.Length;
+                }
+
+                this._settingDisplayText = false;
+            }), DispatcherPriority.ContextIdle);
         }
 
         private void dd_Packs_MouseWheel(object sender, MouseWheelEventArgs e)
