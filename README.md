@@ -19,7 +19,7 @@ This allows you to see how many cards of different rarities have dropped over ti
 - Can search through card names and texts in both, english and the chosen language of your HDT at once
 - **All stored locally. No hassle with overloaded webpages on release days**
 
-[Download](https://github.com/sgkoishi/PackTracker/releases/latest) and unzip  
+[Download](https://github.com/rafx85/PackTracker/releases/latest) and unzip  
 [How to add plugins to HDT](https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki/Available-Plugins)
 
 ## Screenshots
