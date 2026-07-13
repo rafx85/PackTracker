@@ -3,40 +3,45 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System;
 
 namespace PackTracker.View
 {
-    public class AverageCollection : INotifyCollectionChanged, IEnumerable<Average>
+    public class AverageCollection : INotifyCollectionChanged, IEnumerable<Average>, IDisposable
     {
         private ObservableCollection<Average> _statistics = new ObservableCollection<Average>();
+        private readonly History _history;
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         public AverageCollection(History History)
         {
+            this._history = History;
             IEnumerable<int> PackIds = History.Select(x => x.Id).Distinct().OrderBy(x => x);
             foreach (var Id in PackIds)
             {
                 this._statistics.Add(new Average(Id, History));
             }
 
-            History.CollectionChanged += (sender, e) =>
+            History.CollectionChanged += this.History_CollectionChanged;
+
+            this._statistics.CollectionChanged += (sender, e) => CollectionChanged?.Invoke(this, e);
+        }
+
+        private void History_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (sender is History)
             {
-                if (sender is History)
+                if (e.Action == NotifyCollectionChangedAction.Add)
                 {
-                    if (e.Action == NotifyCollectionChangedAction.Add)
+                    foreach (Entity.Pack Pack in e.NewItems)
                     {
-                        foreach (Entity.Pack Pack in e.NewItems)
+                        if (!this._statistics.Any(x => x.Id == Pack.Id))
                         {
-                            if (!this._statistics.Any(x => x.Id == Pack.Id))
-                            {
-                                this.Add(new Average(Pack.Id, (History)sender));
-                            }
+                            this.Add(new Average(Pack.Id, (History)sender));
                         }
                     }
                 }
-            };
-
-            this._statistics.CollectionChanged += (sender, e) => CollectionChanged?.Invoke(this, e);
+            }
         }
 
         private void Add(Average Statistic)
@@ -67,6 +72,15 @@ namespace PackTracker.View
         public Average FindForPackId(int id)
         {
             return this._statistics.SingleOrDefault(x => x.Id == id);
+        }
+
+        public void Dispose()
+        {
+            this._history.CollectionChanged -= this.History_CollectionChanged;
+            foreach (var statistic in this._statistics)
+            {
+                statistic.Dispose();
+            }
         }
     }
 }

@@ -185,5 +185,30 @@ namespace PackTracker
                 Hearthstone_Deck_Tracker.Core.MainWindow.Closed -= this.ClosePityTimerOverlay;
             }
         }
+
+        public void CloseAll()
+        {
+            this.ClosePityTimerOverlay();
+
+            foreach (var window in new[]
+            {
+                this._pityWin,
+                this._statisticWin,
+                this._historyWin,
+                this._logWin,
+                this._searchWin,
+                this._manualInsertWin,
+            })
+            {
+                window?.Close();
+            }
+
+            this._pityWin = null;
+            this._statisticWin = null;
+            this._historyWin = null;
+            this._logWin = null;
+            this._searchWin = null;
+            this._manualInsertWin = null;
+        }
     }
 }

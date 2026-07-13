@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PackHistorian\PackTracker.csproj" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="HearthDb" HintPath="..\HDT\Hearthstone Deck Tracker\HearthDb.dll" />
+    <Reference Include="HearthMirror" HintPath="..\HDT\Hearthstone Deck Tracker\HearthMirror.dll" />
+    <Reference Include="HearthstoneDeckTracker" HintPath="..\HDT\Hearthstone Deck Tracker\HearthstoneDeckTracker.exe" />
+    <Reference Include="HearthWatcher" HintPath="..\HDT\Hearthstone Deck Tracker\HearthWatcher.dll" />
+    <Reference Include="LiveCharts" HintPath="..\HDT\Hearthstone Deck Tracker\LiveCharts.dll" />
+    <Reference Include="LiveCharts.Wpf" HintPath="..\HDT\Hearthstone Deck Tracker\LiveCharts.Wpf.dll" />
+    <Reference Include="MahApps.Metro" HintPath="..\HDT\Hearthstone Deck Tracker\MahApps.Metro.dll" />
+    <Reference Include="Newtonsoft.Json" HintPath="..\HDT\Hearthstone Deck Tracker\Newtonsoft.Json.dll" />
+    <Reference Include="XAMLMarkupExtensions" HintPath="..\HDT\Hearthstone Deck Tracker\XAMLMarkupExtensions.dll" />
+  </ItemGroup>
+</Project>

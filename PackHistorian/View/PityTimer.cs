@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace PackTracker.View
 {
-    public class PityTimer : INotifyPropertyChanged
+    public class PityTimer : INotifyPropertyChanged, IDisposable
     {
         public int PackId { get; }
         public Rarity Rarity { get; }
@@ -16,6 +16,7 @@ namespace PackTracker.View
         public bool SkipFirst { get; }
         public bool WaitForFirst { get; private set; }
         private Settings _settings;
+        private readonly History _history;
 
         public int Current { get; private set; } = 0;
         public ObservableCollection<int> Prev { get; } = new ObservableCollection<int>();
@@ -28,22 +29,25 @@ namespace PackTracker.View
             this.Premium = premium;
             this.SkipFirst = this.WaitForFirst = skipFirst;
             this._settings = settings;
+            this._history = History;
 
             foreach (var Pack in History)
             {
                 this.AddPack(Pack);
             }
 
-            History.CollectionChanged += (sender, e) =>
+            History.CollectionChanged += this.History_CollectionChanged;
+        }
+
+        private void History_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                if (e.Action == NotifyCollectionChangedAction.Add)
+                foreach (Pack Pack in e.NewItems)
                 {
-                    foreach (Pack Pack in e.NewItems)
-                    {
-                        this.AddPack(Pack);
-                    }
+                    this.AddPack(Pack);
                 }
-            };
+            }
         }
 
         private void AddPack(Pack Pack)
@@ -88,6 +92,11 @@ namespace PackTracker.View
         private void OnPropertyChanged(string prop)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public void Dispose()
+        {
+            this._history.CollectionChanged -= this.History_CollectionChanged;
         }
     }
 }

@@ -2,26 +2,38 @@
 using Newtonsoft.Json;
 using System.IO;
 using System.Xml;
+using System;
 
 namespace PackTracker.Storage
 {
     internal class SettingsStorage : ISettingsStorage
     {
+        private readonly string _appDataPath;
+
+        public SettingsStorage() : this(Config.AppDataPath)
+        {
+        }
+
+        internal SettingsStorage(string appDataPath)
+        {
+            this._appDataPath = appDataPath ?? throw new ArgumentNullException(nameof(appDataPath));
+        }
+
         public Settings Fetch()
         {
             var Settings = new Settings();
 
-            var path = Path.Combine(Config.AppDataPath, "PackTracker", "Settings.json");
+            var path = Path.Combine(this._appDataPath, "PackTracker", "Settings.json");
             try
             {
-                return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(path));
+                return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(path)) ?? Settings;
             }
             catch
             {
                 // Supress
             }
 
-            path = Path.Combine(Config.AppDataPath, "PackTracker", "Settings.xml");
+            path = Path.Combine(this._appDataPath, "PackTracker", "Settings.xml");
             if (File.Exists(path))
             {
                 var Xml = new XmlDocument();
@@ -52,13 +64,13 @@ namespace PackTracker.Storage
 
         public void Store(Settings Settings)
         {
-            var path = Path.Combine(Config.AppDataPath, "PackTracker");
-            if (!Directory.Exists(path))
+            if (Settings == null)
             {
-                Directory.CreateDirectory(path);
+                throw new ArgumentNullException(nameof(Settings));
             }
 
-            File.WriteAllText(Path.Combine(path, "Settings.json"), JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented));
+            var path = Path.Combine(this._appDataPath, "PackTracker", "Settings.json");
+            AtomicFile.WriteAllText(path, JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented));
         }
     }
 }

@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System;
 
 namespace PackTracker.View
 {
-    internal class Statistic : INotifyPropertyChanged
+    internal class Statistic : INotifyPropertyChanged, IDisposable
     {
         private int _packId;
         private List<Pack> _packs;
@@ -18,6 +19,7 @@ namespace PackTracker.View
         private int _totalAmount = 0;
         private int _epicCurrStreak = 0;
         private int _legendaryCurrStreak = 0;
+        private readonly History _history;
 
         public int CommonAmount { get; private set; } = 0;
         public double CommonCards => this._totalAmount == 0 ? 0 : (double)this.CommonAmount / this._totalAmount;
@@ -47,6 +49,7 @@ namespace PackTracker.View
         public Statistic(int packId, History History)
         {
             this._packId = packId;
+            this._history = History;
             this._packs = new List<Pack>(History.Where(x => x.Id == packId));
 
             foreach (var Pack in this._packs)
@@ -57,53 +60,55 @@ namespace PackTracker.View
 
             PackWatcher.UpdateGranted();
 
-            History.CollectionChanged += (sender, e) =>
+            History.CollectionChanged += this.History_CollectionChanged;
+        }
+
+        private void History_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                if (e.Action == NotifyCollectionChangedAction.Add)
+                foreach (Pack Pack in e.NewItems)
                 {
-                    foreach (Pack Pack in e.NewItems)
+                    if (Pack.Id == this._packId)
                     {
-                        if (Pack.Id == this._packId)
+                        this._packs.Add(Pack);
+                        this.CountRarity(Pack);
+                        this.CountStreak(Pack);
+
+                        if (Pack.Cards.Any(x => x.Rarity == Rarity.COMMON))
                         {
-                            this._packs.Add(Pack);
-                            this.CountRarity(Pack);
-                            this.CountStreak(Pack);
-
-                            if (Pack.Cards.Any(x => x.Rarity == Rarity.COMMON))
-                            {
-                                this.OnPropertyChanged("CommonAmount");
-                            }
-
-                            if (Pack.Cards.Any(x => x.Rarity == Rarity.RARE))
-                            {
-                                this.OnPropertyChanged("RareAmount");
-                            }
-
-                            if (Pack.Cards.Any(x => x.Rarity == Rarity.EPIC))
-                            {
-                                this.OnPropertyChanged("EpicAmount");
-                            }
-
-                            if (Pack.Cards.Any(x => x.Rarity == Rarity.LEGENDARY))
-                            {
-                                this.OnPropertyChanged("LegendaryAmount");
-                            }
-
-                            this.OnPropertyChanged("CommonCards");
-                            this.OnPropertyChanged("CommonPacks");
-                            this.OnPropertyChanged("RareCards");
-                            this.OnPropertyChanged("RarePacks");
-                            this.OnPropertyChanged("EpicCards");
-                            this.OnPropertyChanged("EpicPacks");
-                            this.OnPropertyChanged("LegendaryCards");
-                            this.OnPropertyChanged("LegendaryPacks");
-                            this.OnPropertyChanged("TotalPacks");
+                            this.OnPropertyChanged("CommonAmount");
                         }
+
+                        if (Pack.Cards.Any(x => x.Rarity == Rarity.RARE))
+                        {
+                            this.OnPropertyChanged("RareAmount");
+                        }
+
+                        if (Pack.Cards.Any(x => x.Rarity == Rarity.EPIC))
+                        {
+                            this.OnPropertyChanged("EpicAmount");
+                        }
+
+                        if (Pack.Cards.Any(x => x.Rarity == Rarity.LEGENDARY))
+                        {
+                            this.OnPropertyChanged("LegendaryAmount");
+                        }
+
+                        this.OnPropertyChanged("CommonCards");
+                        this.OnPropertyChanged("CommonPacks");
+                        this.OnPropertyChanged("RareCards");
+                        this.OnPropertyChanged("RarePacks");
+                        this.OnPropertyChanged("EpicCards");
+                        this.OnPropertyChanged("EpicPacks");
+                        this.OnPropertyChanged("LegendaryCards");
+                        this.OnPropertyChanged("LegendaryPacks");
+                        this.OnPropertyChanged("TotalPacks");
                     }
                 }
+            }
 
-                PackWatcher.UpdateGranted();
-            };
+            PackWatcher.UpdateGranted();
         }
 
         private void CountRarity(Pack Pack)
@@ -198,6 +203,11 @@ namespace PackTracker.View
         private void OnPropertyChanged(string prop)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public void Dispose()
+        {
+            this._history.CollectionChanged -= this.History_CollectionChanged;
         }
     }
 }

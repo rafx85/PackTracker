@@ -11,7 +11,7 @@ namespace PackTracker.Controls
     /// <summary>
     /// Interaktionslogik für HistoryDatePicker.xaml
     /// </summary>
-    public partial class HistoryDatePicker : UserControl, INotifyPropertyChanged
+    public partial class HistoryDatePicker : UserControl, INotifyPropertyChanged, IDisposable
     {
         private PackTracker.History _history;
         private Dictionary<DateTime?, ObservableCollection<Entity.Pack>> _associatedPacks = new Dictionary<DateTime?, ObservableCollection<Entity.Pack>>();
@@ -51,27 +51,7 @@ namespace PackTracker.Controls
             }
 
             this.dp_DatePicker.SelectedDateChanged += (sender, e) => this.OnPropertyChanged("AssociatedPack");
-            History.CollectionChanged += (sender, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    foreach (var Pack in e.NewItems)
-                    {
-                        if (Pack is Entity.Pack NewPack)
-                        {
-                            if (this._associatedPacks.ContainsKey(NewPack.Time.Date))
-                            {
-                                this._associatedPacks[NewPack.Time.Date].Add(NewPack);
-                            }
-
-                            if (this.dp_DatePicker.SelectedDate != NewPack.Time.Date)
-                            {
-                                this.dp_DatePicker.SelectedDate = NewPack.Time.Date;
-                            }
-                        }
-                    }
-                }
-            };
+            History.CollectionChanged += this.History_CollectionChanged;
 
             this.dp_DatePicker.MouseWheel += (sender, e) =>
             {
@@ -122,6 +102,30 @@ namespace PackTracker.Controls
             };
         }
 
+        private void History_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action != NotifyCollectionChangedAction.Add)
+            {
+                return;
+            }
+
+            foreach (var Pack in e.NewItems)
+            {
+                if (Pack is Entity.Pack NewPack)
+                {
+                    if (this._associatedPacks.ContainsKey(NewPack.Time.Date))
+                    {
+                        this._associatedPacks[NewPack.Time.Date].Add(NewPack);
+                    }
+
+                    if (this.dp_DatePicker.SelectedDate != NewPack.Time.Date)
+                    {
+                        this.dp_DatePicker.SelectedDate = NewPack.Time.Date;
+                    }
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string prop)
         {
@@ -151,6 +155,12 @@ namespace PackTracker.Controls
                 this.InitializeCalender(history);
                 history.CollectionChanged -= this.InitializeCalender;
             }
+        }
+
+        public void Dispose()
+        {
+            this._history.CollectionChanged -= this.InitializeCalender;
+            this._history.CollectionChanged -= this.History_CollectionChanged;
         }
     }
 }

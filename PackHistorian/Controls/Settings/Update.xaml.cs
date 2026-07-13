@@ -52,7 +52,7 @@ namespace PackTracker.Controls.Settings
 
             bw.RunWorkerCompleted += (sender, e) =>
             {
-                if (e.Result is IEnumerable<Release> Result)
+                if (e.Error == null && e.Result is IEnumerable<Release> Result)
                 {
                     this.InsertInlines(Result, this.txt_ChangeLog.Inlines);
                     this.btn_Update.IsEnabled = Result.Any(x => Updater.ParseVersion(x.tag_name) > Plugin.CurrentVersion);
@@ -119,7 +119,7 @@ namespace PackTracker.Controls.Settings
             {
                 this.pb_Bar.Visibility = Visibility.Hidden;
 
-                if ((bool)bwe.Result)
+                if (bwe.Error == null && bwe.Result is bool updated && updated)
                 {
                     MessageBox.Show("Update completed\nPlease restart Hearthstone Deck Tracker", "Pack Tracker: Update");
                 }

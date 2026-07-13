@@ -7,12 +7,14 @@ using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 
 namespace PackTracker.Update
 {
     public class Updater
     {
-        private static string _userAgend = "PackTracker";
+        private const string UserAgent = "PackTracker";
+        private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(15);
 
         public bool? NewVersionAvailable()
         {
@@ -23,7 +25,11 @@ namespace PackTracker.Update
 
                 return Plugin.CurrentVersion.CompareTo(LatestVersion) < 0;
             }
-            catch (WebException)
+            catch (Exception exception) when (
+                exception is WebException
+                || exception is SerializationException
+                || exception is InvalidOperationException
+                || exception is ArgumentException)
             {
                 return null;
             }
@@ -32,30 +38,47 @@ namespace PackTracker.Update
 
         public static Version ParseVersion(string version)
         {
-            return new Version(Regex.Match(version, @"\d+(\.\d+)*").ToString());
+            if (string.IsNullOrWhiteSpace(version))
+            {
+                throw new FormatException("The release does not contain a version tag.");
+            }
+
+            var match = Regex.Match(version, @"\d+(\.\d+)*");
+            if (!match.Success)
+            {
+                throw new FormatException($"'{version}' is not a valid release version.");
+            }
+
+            return new Version(match.Value);
         }
 
         public bool Update()
         {
-            var LatestRelease = this.GetLatestRelease();
-            var Asset = LatestRelease.assets.Single(x => x.name == "PackTracker.zip");
+            string tempPath = null;
 
             try
             {
+                var LatestRelease = this.GetLatestRelease();
+                var Asset = LatestRelease?.assets?.SingleOrDefault(x => x.name == "PackTracker.zip");
+                if (Asset == null || !Uri.TryCreate(Asset.browser_download_url, UriKind.Absolute, out var assetUri) || assetUri.Scheme != Uri.UriSchemeHttps)
+                {
+                    return false;
+                }
+
                 using (var client = new WebClient())
                 {
-                    using (var download = client.OpenRead(Asset.browser_download_url))
+                    client.Headers[HttpRequestHeader.UserAgent] = UserAgent;
+                    using (var download = client.OpenRead(assetUri))
                     {
                         var path = Path.Combine(Config.AppDataPath, "Plugins");
-                        var tempPath = Path.Combine(Path.GetTempPath(), "PackTracker");
+                        Directory.CreateDirectory(path);
+                        tempPath = Path.Combine(Path.GetTempPath(), $"PackTracker-{Guid.NewGuid():N}");
+                        Directory.CreateDirectory(tempPath);
 
-                        if (Directory.Exists(tempPath))
+                        using (var Zipper = new ZipArchive(download, ZipArchiveMode.Read))
                         {
-                            Directory.Delete(tempPath, true);
+                            ExtractSafely(Zipper, tempPath);
                         }
-
-                        var Zipper = new ZipArchive(download);
-                        Zipper.ExtractToDirectory(tempPath);
 
                         foreach (var file in Directory.GetFiles(tempPath))
                         {
@@ -63,24 +86,42 @@ namespace PackTracker.Update
                             File.Copy(file, target, true);
                             File.SetLastWriteTime(target, DateTime.Now);
                         }
-
-                        Directory.Delete(tempPath, true);
-
                         return true;
                     }
                 }
             }
-            catch (WebException)
+            catch (Exception exception) when (
+                exception is WebException
+                || exception is IOException
+                || exception is InvalidDataException
+                || exception is InvalidOperationException
+                || exception is UnauthorizedAccessException
+                || exception is SerializationException
+                || exception is ArgumentException)
             {
                 return false;
+            }
+            finally
+            {
+                if (tempPath != null && Directory.Exists(tempPath))
+                {
+                    try
+                    {
+                        Directory.Delete(tempPath, true);
+                    }
+                    catch (IOException)
+                    {
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                    }
+                }
             }
         }
 
         public Release GetLatestRelease()
         {
-            var request = WebRequest.CreateHttp(@"https://api.github.com/repos/sgkoishi/PackTracker/releases/latest");
-            request.Proxy = null;
-            request.UserAgent = _userAgend;
+            var request = CreateRequest(@"https://api.github.com/repos/sgkoishi/PackTracker/releases/latest");
 
             var Release = new Release();
             using (var response = request.GetResponse().GetResponseStream())
@@ -96,9 +137,7 @@ namespace PackTracker.Update
         {
             var Releases = new List<Release>();
 
-            var request = WebRequest.CreateHttp(@"https://api.github.com/repos/sgkoishi/PackTracker/releases");
-            request.Proxy = null;
-            request.UserAgent = _userAgend;
+            var request = CreateRequest(@"https://api.github.com/repos/sgkoishi/PackTracker/releases");
 
             try
             {
@@ -114,6 +153,40 @@ namespace PackTracker.Update
             }
 
             return Releases.AsEnumerable();
+        }
+
+        private static HttpWebRequest CreateRequest(string uri)
+        {
+            var request = WebRequest.CreateHttp(uri);
+            request.UserAgent = UserAgent;
+            request.Timeout = (int)RequestTimeout.TotalMilliseconds;
+            request.ReadWriteTimeout = (int)RequestTimeout.TotalMilliseconds;
+            return request;
+        }
+
+        internal static void ExtractSafely(ZipArchive archive, string destinationDirectory)
+        {
+            var destinationRoot = Path.GetFullPath(destinationDirectory)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                + Path.DirectorySeparatorChar;
+
+            foreach (var entry in archive.Entries)
+            {
+                var destinationPath = Path.GetFullPath(Path.Combine(destinationRoot, entry.FullName));
+                if (!destinationPath.StartsWith(destinationRoot, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidDataException("The update archive contains an unsafe path.");
+                }
+
+                if (string.IsNullOrEmpty(entry.Name))
+                {
+                    Directory.CreateDirectory(destinationPath);
+                    continue;
+                }
+
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+                entry.ExtractToFile(destinationPath, true);
+            }
         }
     }
 }

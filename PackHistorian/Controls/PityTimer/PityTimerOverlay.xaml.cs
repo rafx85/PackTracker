@@ -14,6 +14,7 @@ namespace PackTracker.Controls.PityTimer
     public partial class PityTimerOverlay : Window, INotifyPropertyChanged
     {
         public int? PackId { get; private set; } = null;
+        private readonly PityTimerRepository _pityTimers;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -26,6 +27,7 @@ namespace PackTracker.Controls.PityTimer
         {
             this.InitializeComponent();
             this.DataContext = this;
+            this._pityTimers = PityTimers;
 
             if (History.Count > 0)
             {
@@ -34,17 +36,25 @@ namespace PackTracker.Controls.PityTimer
                 this.Chart_Leg.DataContext = PityTimers.GetPityTimer((int)this.PackId, Rarity.LEGENDARY, true);
             }
 
-            History.CollectionChanged += (sender, e) =>
-            {
-                foreach (Pack Pack in e.NewItems)
-                {
-                    this.Chart_Epic.DataContext = PityTimers.GetPityTimer(Pack.Id, Rarity.EPIC, true);
-                    this.Chart_Leg.DataContext = PityTimers.GetPityTimer(Pack.Id, Rarity.LEGENDARY, true);
-                    this.PackId = Pack.Id;
-                }
+            History.CollectionChanged += this.History_CollectionChanged;
+            Closed += (sender, e) => History.CollectionChanged -= this.History_CollectionChanged;
+        }
 
-                this.OnPropertyChanged("PackId");
-            };
+        private void History_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems == null)
+            {
+                return;
+            }
+
+            foreach (Pack Pack in e.NewItems)
+            {
+                this.Chart_Epic.DataContext = this._pityTimers.GetPityTimer(Pack.Id, Rarity.EPIC, true);
+                this.Chart_Leg.DataContext = this._pityTimers.GetPityTimer(Pack.Id, Rarity.LEGENDARY, true);
+                this.PackId = Pack.Id;
+            }
+
+            this.OnPropertyChanged("PackId");
         }
 
         private void Window_SourceInitialized(object sender, EventArgs e)

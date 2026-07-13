@@ -1,5 +1,11 @@
 name: GitHub CI
 
+permissions:
+  contents: read
+
+env:
+  HDT_VERSION: v1.53.8
+
 on:
   push:
     branches: [master]
@@ -13,26 +19,32 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@main
+        uses: microsoft/setup-msbuild@v2.0.0
 
       - name: Setup HDT
         shell: pwsh
         run: |
-          Invoke-WebRequest (Invoke-WebRequest 'https://api.github.com/repos/HearthSim/Hearthstone-Deck-Tracker/releases' | ConvertFrom-Json)[0].assets.browser_download_url -OutFile HDT.zip
+          $asset = "Hearthstone.Deck.Tracker-$env:HDT_VERSION.zip"
+          Invoke-WebRequest "https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/$env:HDT_VERSION/$asset" -OutFile HDT.zip
           Expand-Archive HDT.zip
           Rename-Item './HDT/Hearthstone Deck Tracker/Hearthstone Deck Tracker.exe' HearthstoneDeckTracker.exe
 
       - name: Build
         shell: pwsh
         run: |
-          dotnet build PackTracker.sln
+          dotnet build PackTracker.sln --configuration Release
+
+      - name: Test
+        shell: pwsh
+        run: |
+          dotnet test PackTracker.sln --configuration Release --no-build
 
       - name: Upload
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
         with:
           name: Artifact
-          path: PackHistorian/bin/Debug
+          path: PackHistorian/bin/Release

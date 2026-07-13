@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System;
 
 namespace PackTracker.Controls
 {
@@ -33,17 +34,19 @@ namespace PackTracker.Controls
             this._hist = History;
 
             Loaded += (sender, e) => this.AddLogs(History);
-
-            History.CollectionChanged += (sender, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    this.AddLogs(e.NewItems.Cast<Pack>());
-                }
-            };
+            History.CollectionChanged += this.History_CollectionChanged;
+            Closed += (sender, e) => History.CollectionChanged -= this.History_CollectionChanged;
 
             CopyCommand.InputGestures.Add(new KeyGesture(Key.C, ModifierKeys.Control));
             SaveCommand.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
+        }
+
+        private void History_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                this.AddLogs(e.NewItems.Cast<Pack>());
+            }
         }
 
         private void OnCopyPressed(object sender, ExecutedRoutedEventArgs e)

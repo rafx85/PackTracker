@@ -17,6 +17,7 @@ namespace PackTracker.Controls
 
             this._index = new IndexRepository(History);
             this.txt_Search.Focus();
+            Closed += (sender, e) => this._index.Dispose();
         }
 
         private void txt_Search_KeyDown(object sender, KeyEventArgs e)

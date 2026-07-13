@@ -2,6 +2,7 @@
 using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.Plugins;
 using Hearthstone_Deck_Tracker.Utility.Toasts;
+using Hearthstone_Deck_Tracker.Enums.Hearthstone;
 using PackTracker.Storage;
 using PackTracker.Update;
 using System;
@@ -22,6 +23,9 @@ namespace PackTracker
         private WindowManager _windows = new WindowManager(_name);
         private View.AverageCollection _averageCollection;
         private View.Cache.PityTimerRepository _pityTimers;
+        private static readonly object ModeHandlerLock = new object();
+        private static WeakReference<PackWatcher> _activeWatcher;
+        private static bool _modeHandlerRegistered;
 
         public static Version CurrentVersion { get; } = new Version("1.4.26");
 
@@ -33,16 +37,16 @@ namespace PackTracker
             try
             {
                 this._history = this._historyStorage.Fetch();
-                this._averageCollection = new View.AverageCollection(this._history);
             }
             catch
             {
                 this._history = new History();
             }
+            this._averageCollection = new View.AverageCollection(this._history);
 
             try
             {
-                this._settings = this._settingsStorage.Fetch();
+                this._settings = this._settingsStorage.Fetch() ?? new Settings();
             }
             catch
             {
@@ -107,7 +111,15 @@ namespace PackTracker
 
         public void OnLoad()
         {
-            Hearthstone_Deck_Tracker.API.GameEvents.OnModeChanged.Add(this._watcher.HandleMode);
+            lock (ModeHandlerLock)
+            {
+                _activeWatcher = new WeakReference<PackWatcher>(this._watcher);
+                if (!_modeHandlerRegistered)
+                {
+                    Hearthstone_Deck_Tracker.API.GameEvents.OnModeChanged.Add(HandleModeChanged);
+                    _modeHandlerRegistered = true;
+                }
+            }
             this._watcher.Start();
 
             if (this._settings.Update)
@@ -116,7 +128,7 @@ namespace PackTracker
                 bwCheck.DoWork += (sender, e) => e.Result = this._updater.NewVersionAvailable();
                 bwCheck.RunWorkerCompleted += (sender, e) =>
                 {
-                    if ((bool?)e.Result == true)
+                    if (e.Error == null && (bool?)e.Result == true)
                     {
                         this._windows.ShowSettingsWin(this._settings, this._settingsStorage, typeof(Controls.Settings.Update));
                     }
@@ -127,11 +139,37 @@ namespace PackTracker
 
         public void OnUnload()
         {
+            lock (ModeHandlerLock)
+            {
+                if (_activeWatcher != null
+                    && _activeWatcher.TryGetTarget(out var activeWatcher)
+                    && ReferenceEquals(activeWatcher, this._watcher))
+                {
+                    _activeWatcher = null;
+                }
+            }
             this._watcher.Stop();
+            this._windows.CloseAll();
+            this._pityTimers.Dispose();
+            this._averageCollection.Dispose();
         }
 
         public void OnUpdate()
         {
+        }
+
+        private static void HandleModeChanged(Mode mode)
+        {
+            WeakReference<PackWatcher> watcherReference;
+            lock (ModeHandlerLock)
+            {
+                watcherReference = _activeWatcher;
+            }
+
+            if (watcherReference != null && watcherReference.TryGetTarget(out var watcher))
+            {
+                watcher.HandleMode(mode);
+            }
         }
 
         public static HearthDb.Enums.Locale GetLocale()

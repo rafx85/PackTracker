@@ -28,6 +28,7 @@ namespace PackTracker.Controls.PityTimer
             };
 
             Loaded += (sender, e) => this.dd_Packs.DataContext = History;
+            Closed += (sender, e) => this.dd_Packs.DataContext = null;
         }
     }
 }

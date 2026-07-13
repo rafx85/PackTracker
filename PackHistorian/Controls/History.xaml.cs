@@ -12,6 +12,7 @@ namespace PackTracker.Controls
             this.InitializeComponent();
             this.ic_Cards.DataContext = DatePicker;
             this.uc_Date.Content = DatePicker;
+            Closed += (sender, e) => DatePicker.Dispose();
         }
     }
 }

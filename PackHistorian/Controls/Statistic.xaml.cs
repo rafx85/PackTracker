@@ -9,23 +9,23 @@ namespace PackTracker.Controls
     public partial class Statistic
     {
         public static Dictionary<int, int> obtained = new Dictionary<int, int>();
+        private readonly Dictionary<int, View.Statistic> _statistics = new Dictionary<int, View.Statistic>();
+
         public Statistic(PackTracker.History History, PackTracker.Settings settings)
         {
             this.InitializeComponent();
-
-            var _statistics = new Dictionary<int, View.Statistic>();
 
             this.dd_Packs.SelectionChanged += (sender, e) =>
             {
                 if (e.AddedItems.Count == 1)
                 {
                     var selection = (int)e.AddedItems[0];
-                    if (!_statistics.ContainsKey(selection))
+                    if (!this._statistics.ContainsKey(selection))
                     {
-                        _statistics.Add(selection, new View.Statistic(selection, History));
+                        this._statistics.Add(selection, new View.Statistic(selection, History));
                     }
 
-                    this.dp_Statistic.DataContext = _statistics[selection];
+                    this.dp_Statistic.DataContext = this._statistics[selection];
                 }
                 else
                 {
@@ -34,6 +34,15 @@ namespace PackTracker.Controls
             };
 
             Loaded += (sender, e) => this.dd_Packs.DataContext = History;
+            Closed += (sender, e) =>
+            {
+                this.dd_Packs.DataContext = null;
+                foreach (var statistic in this._statistics.Values)
+                {
+                    statistic.Dispose();
+                }
+                this._statistics.Clear();
+            };
             this.dd_Packs.Focus();
         }
     }

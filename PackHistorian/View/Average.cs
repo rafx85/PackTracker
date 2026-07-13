@@ -7,12 +7,13 @@ using System.Linq;
 
 namespace PackTracker.View
 {
-    public class Average : INotifyPropertyChanged
+    public class Average : INotifyPropertyChanged, IDisposable
     {
         private List<int> _countsEpic = new List<int>();
         private List<int> _countsLeg = new List<int>();
         private bool _skippingEpic = true;
         private bool _skippingLeg = true;
+        private readonly History _history;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -27,6 +28,7 @@ namespace PackTracker.View
         public Average(int PackId, History History)
         {
             this.Id = PackId;
+            this._history = History;
             this.AddCounts(History);
 
             History.CollectionChanged += this.History_CollectionChanged;
@@ -107,6 +109,11 @@ namespace PackTracker.View
         private void OnPropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        }
+
+        public void Dispose()
+        {
+            this._history.CollectionChanged -= this.History_CollectionChanged;
         }
     }
 }

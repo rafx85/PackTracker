@@ -1,10 +1,11 @@
 ﻿using HearthDb.Enums;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace PackTracker.View.Cache
 {
-    public class PityTimerRepository
+    public class PityTimerRepository : IDisposable
     {
         private History _history;
         private Settings _settings;
@@ -27,6 +28,15 @@ namespace PackTracker.View.Cache
             }
 
             return pt;
+        }
+
+        public void Dispose()
+        {
+            foreach (var pityTimer in this._cache)
+            {
+                pityTimer.Dispose();
+            }
+            this._cache.Clear();
         }
     }
 }
