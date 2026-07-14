@@ -1,10 +1,10 @@
-# PackTracker [![Github All Downloads](https://img.shields.io/github/downloads/sgkoishi/packtracker/total.svg)](https://github.com/sgkoishi/packtracker/releases)
+# PackTracker [![Github All Downloads](https://img.shields.io/github/downloads/rafx85/PackTracker/total.svg)](https://github.com/rafx85/PackTracker/releases)
 Plugin for [HearthstoneDeckTracker](https://hsdecktracker.net/)
 
 Pack Tacker is a small but handy plugin for Hearthstone Deck Tacker that allows you to keep an eye on every pack you open. 
 This allows you to see how many cards of different rarities have dropped over time and also enables you to estimate when your next Epic or Legendary is coming!
 
-## Features [![GitHub Latest](https://img.shields.io/github/release/sgkoishi/packtracker.svg)](https://github.com/sgkoishi/PackTracker/releases/latest) [![Github Latest Downloads](https://img.shields.io/github/downloads/sgkoishi/packtracker/latest/total.svg)](https://github.com/sgkoishi/PackTracker/releases/latest)
+## Features [![GitHub Latest](https://img.shields.io/github/rafx85/PackTracker/packtracker.svg)](https://github.com/rafx85/PackTracker/releases/latest) [![Github Latest Downloads](https://img.shields.io/github/downloads/rafx85/PackTracker/latest/total.svg)](https://github.com/sgkoishi/PackTracker/releases/latest)
 - Tracks your pack openings
   - **Fully Automatic. No hassle with spreadsheets**
 - Data can be represented in
