@@ -30,6 +30,8 @@ To upgrade from the previous updater, close HDT and extract the new `PackTracker
 
 To publish an update, set the version in `Directory.Build.props` and push the matching `v<version>` tag. GitHub Actions builds and tests the tagged commit, verifies the installer, and attaches `PackTracker.zip` to its GitHub release. Branch builds produce the same ZIP as a CI artifact.
 
+If GitHub misses the tag push, run `gh workflow run build.yml --ref v<version>` to start the same release workflow for that tag.
+
 ## Screenshots
 
 #### Pity Timers  
