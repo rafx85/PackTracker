@@ -22,6 +22,14 @@ This allows you to see how many cards of different rarities have dropped over ti
 [Download](https://github.com/rafx85/PackTracker/releases/latest) and unzip  
 [How to add plugins to HDT](https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki/Available-Plugins)
 
+## Updates
+
+Open **Pack Tracker → Settings → Update** to check for a new release. When a newer package is available, choose **Install** and confirm the HDT restart. PackTracker verifies the GitHub SHA-256 digest and both assembly versions before restarting. The installer backs up the installed files and restores them if installation fails.
+
+To upgrade from the previous updater, close HDT and extract the new `PackTracker.zip` over your existing PackTracker installation once.
+
+To publish an update, set the version in `Directory.Build.props` and push the matching `v<version>` tag. GitHub Actions builds and tests the tagged commit, verifies the installer, and attaches `PackTracker.zip` to its GitHub release. Branch builds produce the same ZIP as a CI artifact.
+
 ## Screenshots
 
 #### Pity Timers  

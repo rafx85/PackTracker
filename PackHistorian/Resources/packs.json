@@ -1583,6 +1583,42 @@
         "jaJP": "「タイムウェイの旅人たち」キャッチアップ",
         "thTH": "แคตช์อัพ Across the Timeways"
     },
+    "1057": {
+        "enUS": "Reign of the Black Empire",
+        "enGB": "Reign of the Black Empire",
+        "frFR": "Le règne de l’Empire noir",
+        "deDE": "Herrschaft des Schwarzen Imperiums",
+        "koKR": "검은 제국의 지배",
+        "esES": "El Auge del Imperio Negro",
+        "esMX": "La era del Imperio Negro",
+        "ruRU": "Власть Темной Империи",
+        "zhTW": "黑暗帝國霸業",
+        "zhCN": "黑暗帝国的统治",
+        "itIT": "Ritorno all'Impero Nero",
+        "ptBR": "Reinado dos Deuses Antigos",
+        "plPL": "Rządy Czarnego Imperium",
+        "ptPT": "Reinado dos Deuses Antigos",
+        "jaJP": "黒の帝国の君臨",
+        "thTH": "Reign of the Black Empire"
+    },
+    "1058": {
+        "enUS": "Golden Reign of the Black Empire",
+        "enGB": "Golden Reign of the Black Empire",
+        "frFR": "Le règne de l’Empire noir doré",
+        "deDE": "Goldene Herrschaft des Schwarzen Imperiums",
+        "koKR": "황금 검은 제국의 지배",
+        "esES": "El Auge del Imperio Negro dorado",
+        "esMX": "Dorado de La era del Imperio Negro",
+        "ruRU": "Золотая «Власть Темной Империи»",
+        "zhTW": "黑暗帝國霸業金卡",
+        "zhCN": "黑暗帝国的统治金色包",
+        "itIT": "Ritorno all'Impero Nero Dorata",
+        "ptBR": "Pacote Dourado de Reinado dos Deuses Antigos",
+        "plPL": "Złote Rządy Czarnego Imperium",
+        "ptPT": "Pacote Dourado de Reinado dos Deuses Antigos",
+        "jaJP": "ゴールデン「黒の帝国の君臨」",
+        "thTH": "Reign of the Black Empire สีทอง"
+    },
     "1063": {
         "enUS": "Cataclysm Catch-up",
         "enGB": "Cataclysm Catch-up",
@@ -1600,5 +1636,23 @@
         "ptPT": "Atualização de Cataclismo",
         "jaJP": "「終焉のアゼロス」キャッチアップ",
         "thTH": "แคตช์อัพ Cataclysm"
+    },
+    "1075": {
+        "enUS": "Reign of the Black Empire Catch-up",
+        "enGB": "Reign of the Black Empire Catch-up",
+        "frFR": "Rattrapage du Règne de l’Empire noir",
+        "deDE": "Aufholpackung: Herrschaft des Schwarzen Imperiums",
+        "koKR": "검은 제국의 지배 발돋움",
+        "esES": "Puesta al día de El Auge del Imperio Negro",
+        "esMX": "Abastecimiento de La era del Imperio Negro",
+        "ruRU": "«Власть Темной Империи» для догоняющих",
+        "zhTW": "《黑暗帝國霸業》追趕進度包",
+        "zhCN": "黑暗帝国的统治追赶包",
+        "itIT": "Recupero di Ritorno all'Impero Nero",
+        "ptBR": "Pacote de Atualização de Reinado dos Deuses Antigos",
+        "plPL": "Pakiet posiłkowy Rządów Czarnego Imperium",
+        "ptPT": "Pacote de Atualização de Reinado dos Deuses Antigos",
+        "jaJP": "「黒の帝国の君臨」キャッチアップ",
+        "thTH": "แคตช์อัพ Reign of the Black Empire"
     }
 }

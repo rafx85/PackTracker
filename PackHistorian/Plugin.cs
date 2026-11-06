@@ -27,7 +27,7 @@ namespace PackTracker
         private static WeakReference<PackWatcher> _activeWatcher;
         private static bool _modeHandlerRegistered;
 
-        public static Version CurrentVersion { get; } = new Version("1.4.28");
+        public static Version CurrentVersion { get; } = typeof(Plugin).Assembly.GetName().Version;
 
         public Plugin()
         {
@@ -128,7 +128,7 @@ namespace PackTracker
                 bwCheck.DoWork += (sender, e) => e.Result = this._updater.NewVersionAvailable();
                 bwCheck.RunWorkerCompleted += (sender, e) =>
                 {
-                    if (e.Error == null && (bool?)e.Result == true)
+                    if (this._watcher.Running && e.Error == null && (bool?)e.Result == true)
                     {
                         this._windows.ShowSettingsWin(this._settings, this._settingsStorage, typeof(Controls.Settings.Update));
                     }

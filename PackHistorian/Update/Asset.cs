@@ -10,5 +10,9 @@ namespace PackTracker.Update
 
         [DataMember]
         public string browser_download_url;
+        [DataMember]
+        public string digest;
+        [DataMember]
+        public long size;
     }
 }

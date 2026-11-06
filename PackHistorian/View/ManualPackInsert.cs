@@ -81,7 +81,10 @@ namespace PackTracker.View
 
         private readonly Dictionary<int, List<HDTCard>> _setsCache = new Dictionary<int, List<HDTCard>>();
 
-        internal static readonly List<int> GoldenPacks = new List<int> { 23, 603, 643, 686, 716, 737, 841, 850, 874, 904, 921, 932, 937, 938, 939, 945, 952, 970, 977, 985, 986, 990, 1031, 1040, 1045, 1048, 1055 };
+        // CardSet.BE is missing from the HearthDb version used by older HDT builds.
+        private const CardSet BlackEmpire = (CardSet)1994;
+
+        internal static readonly List<int> GoldenPacks = new List<int> { 23, 603, 643, 686, 716, 737, 841, 850, 874, 904, 921, 932, 937, 938, 939, 945, 952, 970, 977, 985, 986, 990, 1031, 1040, 1045, 1048, 1055, 1058 };
         private static readonly Dictionary<int, Func<HearthDb.Card, bool>> _filter = new Dictionary<int, Func<HearthDb.Card, bool>>
         {
             [1] = card => card.Set == CardSet.EXPERT1,
@@ -174,7 +177,10 @@ namespace PackTracker.View
             [1048] = card => card.Set == CardSet.ESCAPEFROM_VIOLET_HOLD,
             [1055] = card => card.Set == CardSet.TIME_TRAVEL,
             [1056] = card => card.Set is CardSet.WHIZBANGS_WORKSHOP or CardSet.ISLAND_VACATION or CardSet.SPACE or CardSet.EMERALD_DREAM or CardSet.THE_LOST_CITY,
+            [1057] = card => card.Set == BlackEmpire,
+            [1058] = card => card.Set == BlackEmpire,
             [1063] = card => card.Set is CardSet.EMERALD_DREAM or CardSet.THE_LOST_CITY or CardSet.TIME_TRAVEL,
+            [1075] = card => card.Set is CardSet.EMERALD_DREAM or CardSet.THE_LOST_CITY or CardSet.TIME_TRAVEL or CardSet.CATACLYSM or CardSet.ESCAPEFROM_VIOLET_HOLD,
         };
 
         public ManualPackInsert()

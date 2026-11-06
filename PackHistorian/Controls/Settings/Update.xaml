@@ -25,6 +25,7 @@
                     <metro:ToggleSwitchButton DockPanel.Dock="Right" IsChecked="{Binding Update}" />
                     <Label DockPanel.Dock="Left" Content="Check on startup" Foreground="White" Target="{Binding ElementName=sw_Update}" ToolTip="Opens this window if a new update is available on start" />
                 </DockPanel>
+                <TextBlock Name="txt_UpdateStatus" TextWrapping="Wrap" Foreground="White" Margin="0,8,0,8" MaxWidth="360" HorizontalAlignment="Left" />
                 <DockPanel>
                     <Button DockPanel.Dock="Right" Name="btn_Refresh" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0,0,0" Click="btn_Refresh_Click">Refresh</Button>
                     <Button DockPanel.Dock="Right" Name="btn_Update" IsEnabled="False" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0,0,0" Click="btn_Update_Click" Content="Update Now">

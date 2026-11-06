@@ -17,5 +17,9 @@ namespace PackTracker.Update
 
         [DataMember]
         public string body;
+        [DataMember]
+        public bool draft;
+        [DataMember]
+        public bool prerelease;
     }
 }

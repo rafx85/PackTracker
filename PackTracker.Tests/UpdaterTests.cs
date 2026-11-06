@@ -1,7 +1,9 @@
 using PackTracker.Update;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using Xunit;
 
 namespace PackTracker.Tests
@@ -31,29 +33,68 @@ namespace PackTracker.Tests
             Assert.Throws<FormatException>(() => Updater.ParseVersion(tag));
         }
 
-        [Fact]
-        public void ExtractSafelyRejectsParentDirectoryTraversal()
+        [Theory]
+        [InlineData("https://github.com/rafx85/PackTracker/releases/download/v2.0.0/PackTracker.zip", true)]
+        [InlineData("https://github.com/rafx85/DustFinder/releases/download/v2.0.0/PackTracker.zip", false)]
+        [InlineData("https://github.com/rafx85/PackTracker/releases/download/v1.4.28/PackTracker.zip", false)]
+        [InlineData("https://example.com/PackTracker.zip", false)]
+        public void UpdateAssetMustBelongToTheSelectedRelease(string url, bool trusted)
         {
-            using (var directory = new TemporaryDirectory())
-            using (var stream = new MemoryStream())
+            var asset = new Asset { name = UpdatePackage.AssetName, browser_download_url = url, digest = "sha256:" + new string('a', 64), size = 100 };
+            var release = new Release { tag_name = "v2.0.0", assets = new List<Asset> { asset } };
+            Assert.Equal(trusted ? asset : null, Updater.GetUpdateAsset(release));
+
+            asset.digest = null;
+            Assert.Null(Updater.GetUpdateAsset(release));
+        }
+
+        [Theory]
+        [InlineData("v2.0.0-rc1", false, false, false)]
+        [InlineData("v2.0.0", true, false, false)]
+        [InlineData("v2.0.0", false, true, false)]
+        [InlineData("v2.0.0", false, false, true)]
+        public void OnlyStableReleaseVersionsCanBeInstalled(string tag, bool draft, bool prerelease, bool valid)
+        {
+            var release = new Release { tag_name = tag, draft = draft, prerelease = prerelease };
+            Assert.Equal(valid, Updater.TryGetReleaseVersion(release, out var version));
+            if (valid)
+                Assert.Equal(new Version(2, 0, 0, 0), version);
+        }
+
+        [Fact]
+        public void DigestVerificationRejectsTamperedPackage()
+        {
+            const string digest = "sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824";
+            using var package = new MemoryStream(Encoding.UTF8.GetBytes("hello"));
+            UpdatePackage.VerifyDigest(package, digest);
+            package.Position = 0;
+            package.WriteByte(0);
+            package.Position = 0;
+            Assert.Throws<InvalidDataException>(() => UpdatePackage.VerifyDigest(package, digest));
+        }
+
+        [Theory]
+        [InlineData("../outside.txt")]
+        [InlineData("unrelated.dll")]
+        [InlineData("packtracker.DLL")]
+        public void ExtractRejectsUnexpectedFilesBeforeWriting(string extraEntry)
+        {
+            using var directory = new TemporaryDirectory();
+            using var stream = new MemoryStream();
+            using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
             {
-                using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
+                foreach (var name in new[] { UpdatePackage.PluginFileName, UpdatePackage.HelperFileName, extraEntry })
                 {
-                    var entry = archive.CreateEntry("../outside.txt");
-                    using (var writer = new StreamWriter(entry.Open()))
-                    {
-                        writer.Write("unsafe");
-                    }
+                    using var file = archive.CreateEntry(name).Open();
+                    file.WriteByte(1);
                 }
-
-                stream.Position = 0;
-                using (var archive = new ZipArchive(stream, ZipArchiveMode.Read))
-                {
-                    Assert.Throws<InvalidDataException>(() => Updater.ExtractSafely(archive, directory.Path));
-                }
-
-                Assert.False(File.Exists(Path.Combine(Path.GetDirectoryName(directory.Path), "outside.txt")));
             }
+
+            stream.Position = 0;
+            using var update = new ZipArchive(stream, ZipArchiveMode.Read);
+            Assert.Throws<InvalidDataException>(() => UpdatePackage.Extract(update, directory.Path));
+            Assert.Empty(Directory.GetFiles(directory.Path));
+            Assert.False(File.Exists(Path.Combine(Path.GetDirectoryName(directory.Path), "outside.txt")));
         }
     }
 }

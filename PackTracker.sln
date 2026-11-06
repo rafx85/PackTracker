@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackTracker", "PackHistoria
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackTracker.Tests", "PackTracker.Tests\PackTracker.Tests.csproj", "{E707F147-28F0-4FC5-867C-76D5E510A144}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackTracker.Updater", "PackTracker.Updater\PackTracker.Updater.csproj", "{1D063936-96F5-4475-A8DE-3E97FE91ED2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{E707F147-28F0-4FC5-867C-76D5E510A144}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E707F147-28F0-4FC5-867C-76D5E510A144}.Release|x86.ActiveCfg = Release|Any CPU
 		{E707F147-28F0-4FC5-867C-76D5E510A144}.Release|x86.Build.0 = Release|Any CPU
+		{1D063936-96F5-4475-A8DE-3E97FE91ED2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D063936-96F5-4475-A8DE-3E97FE91ED2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D063936-96F5-4475-A8DE-3E97FE91ED2C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1D063936-96F5-4475-A8DE-3E97FE91ED2C}.Debug|x86.Build.0 = Debug|Any CPU
+		{1D063936-96F5-4475-A8DE-3E97FE91ED2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D063936-96F5-4475-A8DE-3E97FE91ED2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D063936-96F5-4475-A8DE-3E97FE91ED2C}.Release|x86.ActiveCfg = Release|Any CPU
+		{1D063936-96F5-4475-A8DE-3E97FE91ED2C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

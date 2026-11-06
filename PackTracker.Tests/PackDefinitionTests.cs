@@ -2,6 +2,7 @@ using HearthDb.Enums;
 using PackTracker.View;
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Reflection;
 using Xunit;
 
@@ -10,29 +11,38 @@ namespace PackTracker.Tests
     public class PackDefinitionTests
     {
         [Fact]
-        public void PluginVersionMatchesReleaseVersion()
+        public void PluginVersionMatchesFileVersion()
         {
-            Assert.Equal(new Version(1, 4, 28), Plugin.CurrentVersion);
+            var fileVersion = FileVersionInfo.GetVersionInfo(typeof(Plugin).Assembly.Location).FileVersion;
+            Assert.Equal(Version.Parse(fileVersion), Plugin.CurrentVersion);
         }
 
         [Theory]
         [InlineData(1047, "Escape from Violet Hold (1047)")]
         [InlineData(1048, "Golden Escape from Violet Hold (1048)")]
-        public void VioletHoldPackNamesAreRegistered(int packId, string expected)
+        [InlineData(1057, "Reign of the Black Empire (1057)")]
+        [InlineData(1058, "Golden Reign of the Black Empire (1058)")]
+        [InlineData(1075, "Reign of the Black Empire Catch-up (1075)")]
+        public void ExpansionPackNamesAreRegistered(int packId, string expected)
         {
             Assert.Equal(expected, PackNameConverter.Convert(packId, Locale.enUS));
         }
 
-        [Fact]
-        public void GoldenVioletHoldPackIsRegistered()
+        [Theory]
+        [InlineData(1048)]
+        [InlineData(1058)]
+        public void GoldenExpansionPackIsRegistered(int packId)
         {
-            Assert.Contains(1048, ManualPackInsert.GoldenPacks);
+            Assert.Contains(packId, ManualPackInsert.GoldenPacks);
         }
 
         [Theory]
         [InlineData(1047)]
         [InlineData(1048)]
-        public void VioletHoldManualInsertFiltersAreRegistered(int packId)
+        [InlineData(1057)]
+        [InlineData(1058)]
+        [InlineData(1075)]
+        public void ExpansionManualInsertFiltersAreRegistered(int packId)
         {
             var field = typeof(ManualPackInsert).GetField("_filter", BindingFlags.NonPublic | BindingFlags.Static);
             var filters = Assert.IsAssignableFrom<IDictionary>(field.GetValue(null));

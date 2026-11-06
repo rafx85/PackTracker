@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <LangVersion>latest</LangVersion>
+    <Version>$(PackTrackerVersion)</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\PackHistorian\Update\UpdatePackage.cs" Link="UpdatePackage.cs" />
+    <Compile Include="..\PackHistorian\Update\UpdateRequest.cs" Link="UpdateRequest.cs" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+</Project>
